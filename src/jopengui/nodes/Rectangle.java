@@ -1,6 +1,7 @@
 package jopengui.nodes;
 
 import jopengui.gfx.GuiShader;
+import jopengui.utils.Maths;
 import org.joml.Matrix4f;
 
 public class Rectangle extends Node {
@@ -9,8 +10,9 @@ public class Rectangle extends Node {
     }
 
     @Override
-    public void render(GuiShader shader, Matrix4f origin, Node parent) {
-        bindLocation(shader, origin);
+    public void render(GuiShader shader, Matrix4f parentModel) {
+        Matrix4f thisModel = Maths.createModelMatrix(parentModel, this.position, this.rotation, this.scale);
+        shader.loadModel(thisModel);
         renderBackground(shader);
     }
 }

@@ -1,6 +1,7 @@
 package jopengui.nodes;
 
 import jopengui.gfx.GuiShader;
+import jopengui.utils.Maths;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -47,10 +48,10 @@ public class Button extends Node {
     }
 
     @Override
-    public void render(GuiShader shader, Matrix4f origin, Node parent) {
+    public void render(GuiShader shader, Matrix4f parentModel) {
+        Matrix4f thisModel = Maths.createModelMatrix(parentModel, this.position, this.rotation, this.scale);
+        shader.loadModel(thisModel);
         renderBackground(shader);
-
-        origin.getTranslation(translation);
     }
 
     public void onButtonPressed(Action onClick) {
