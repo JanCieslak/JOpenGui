@@ -1,54 +1,49 @@
 package jopengui.nodes;
 
 import jopengui.gfx.GuiShader;
+import jopengui.gfx.GuiTexture;
+import jopengui.utils.Maths;
 import org.joml.Matrix4f;
-import org.lwjgl.system.MemoryStack;
+import org.joml.Vector2f;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-
-import static org.lwjgl.opengl.GL11C.*;
-import static org.lwjgl.opengl.GL14C.GL_TEXTURE_LOD_BIAS;
-import static org.lwjgl.opengl.GL30C.glGenerateMipmap;
-import static org.lwjgl.stb.STBImage.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Label extends Node {
-    private int textureID;
+    private GuiTexture texture;
+    private String text;
 
-    public Label(float x, float y, float w, float h, String fontTextureName) {
+    public Label(float x, float y, float w, float h, String text, String fontTextureName, int cols, int rows) {
         super(x, y, w, h);
-        this.textureID = loadTexture(fontTextureName);
+        this.text = text;
+        this.texture = new GuiTexture("fonts/" + fontTextureName);
+        loadMesh(text, cols, rows);
     }
 
     @Override
     public void render(GuiShader shader, Matrix4f parentModel) {
+        Matrix4f thisModel = Maths.createModelMatrix(parentModel, this.position, this.rotation, this.scale);
+        shader.loadModel(thisModel);
+        renderBackground(shader);
+
 
     }
 
-    private int loadTexture(String fontTextureName) {
-        int textureID = glGenTextures();
+    private void loadMesh(String text, int cols, int rows) {
+        byte[] chars = text.getBytes(StandardCharsets.ISO_8859_1);
+        int numChars = chars.length;
 
-        glBindTexture(GL_TEXTURE_2D, textureID);
+        List<Vector2f> positions = new ArrayList<>();
+        List<Vector2f> texCoords = new ArrayList<>();
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        float tileWidth = texture.getWidth() / (float) cols;
+        float tileHeight = texture.getHeight() / (float) rows;
 
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer w = stack.mallocInt(1);
-            IntBuffer h = stack.mallocInt(1);
-            IntBuffer components = stack.mallocInt(1);
+        for (int i = 0; i < numChars; i++) {
 
-            stbi_set_flip_vertically_on_load(false);
-            ByteBuffer image = stbi_load("resources/fonts/" + fontTextureName, w, h, components, 4);
-            if (image == null)
-                throw new RuntimeException("Failed to load a texture file!" + System.lineSeparator() + stbi_failure_reason());
-
-            int width = w.get();
-            int height = h.get();
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-            glBindTexture(GL_TEXTURE_2D, 0);
         }
-
-        return textureID;
     }
+
+
 }

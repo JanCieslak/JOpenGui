@@ -4,7 +4,6 @@ import jopengui.gfx.GuiShader;
 import jopengui.nodes.Node;
 import jopengui.utils.Maths;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 public class NodeList extends Node {
     public NodeList(float x, float y, float w, float h) {
