@@ -15,11 +15,12 @@ import static org.lwjgl.opengl.GL11C.glClearColor;
 
 public abstract class AbstractTest {
     protected static void test(Object object) throws Exception {
+        final Window window = new Window("Demo", 1600, 800);
+
         final Class<?> cls = object.getClass();
         final Method initialize = cls.getDeclaredMethod("initialize");
         final Method update = cls.getDeclaredMethod("update", double.class);
 
-        final Window window = new Window("Demo", 1600, 800);
         final GuiRenderer renderer = new GuiRenderer((List<Node>) initialize.invoke(object));
 
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);

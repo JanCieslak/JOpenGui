@@ -26,6 +26,14 @@ public abstract class Node {
     protected Node parent = null;
     private int vao;
 
+    public Node(float x, float y) {
+        this.position = new Vector2f(x, y);
+        this.size = new Vector2f();
+        children = new ArrayList<>();
+
+        vao = -1;
+    }
+
     public Node(float x, float y, float w, float h) {
         this.position = new Vector2f(x, y);
         this.size = new Vector2f(w, h);
@@ -46,7 +54,7 @@ public abstract class Node {
         glBindVertexArray(0);
     }
 
-    private void storeDataInAttribList(int attribNumber, int attribSize, float[] data) {
+    protected void storeDataInAttribList(int attribNumber, int attribSize, float[] data) {
         int vboId = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
         FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
@@ -58,6 +66,11 @@ public abstract class Node {
     }
 
     protected void renderBackground(GuiShader shader) {
+        // todo in case renderBackground would be called from node that doesn't have background quad
+        // after node dev delete
+        if (vao == -1)
+            throw new RuntimeException("This node doesn't have background quad");
+
         glBindVertexArray(vao);
         glEnableVertexAttribArray(0);
         shader.loadColor(backgroundColor);
