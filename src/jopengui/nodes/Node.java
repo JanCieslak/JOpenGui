@@ -54,6 +54,8 @@ public abstract class Node {
         glBindVertexArray(0);
     }
 
+    // todo cleanup
+    // return vboId in order to delete the VBOs after assigning them to VAO
     protected void storeDataInAttribList(int attribNumber, int attribSize, float[] data) {
         int vboId = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
@@ -66,10 +68,10 @@ public abstract class Node {
     }
 
     protected void renderBackground(GuiShader shader) {
-        // todo in case renderBackground would be called from node that doesn't have background quad
-        // after node dev delete
+        // todo in case renderBackground would be called from node that doesn't have a background quad
+        // after node dev delete or profile and check how it affects the framerate with big amount of nodes
         if (vao == -1)
-            throw new RuntimeException("This node doesn't have background quad");
+            throw new RuntimeException("This node doesn't have a background quad");
 
         glBindVertexArray(vao);
         glEnableVertexAttribArray(0);

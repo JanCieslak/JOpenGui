@@ -14,8 +14,10 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.opengl.GL11C.glClearColor;
 
 public abstract class AbstractTest {
+    protected static int frameCount = 0;
+
     protected static void test(Object object) throws Exception {
-        final Window window = new Window("Demo", 1600, 800);
+        final Window window = new Window("Demo", 1600, 900);
 
         final Class<?> cls = object.getClass();
         final Method initialize = cls.getDeclaredMethod("initialize");
@@ -26,7 +28,6 @@ public abstract class AbstractTest {
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         double lastTime = glfwGetTime();
         double previousTime = glfwGetTime();
-        int frameCount = 0;
 
         while (!window.shouldClose()) {
             window.prepare();
