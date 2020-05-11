@@ -10,8 +10,10 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import utilClasses.Window;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -30,22 +32,19 @@ public class Text extends Node {
     private GuiTextTexture textTexture;
     private Font font;
     private Charset charset;
-    private String text;
     private int textVao = -1;
     private int vertexCount = 0;
 
-    public Text(float x, float y, String text, Font font, Charset charset) {
+    public Text(float x, float y, String text, Font font) {
         super(x, y);
-        this.text = text;
         this.font = font;
-        this.charset = charset;
         this.textShader = new GuiTextShader();
 
         textShader.bind();
         textShader.loadMatrix("projection", new Matrix4f().ortho(0, Window.WIDTH, Window.HEIGHT,0, -1.0f, 1.0f));
         textShader.unbind();
 
-        loadMesh(text, font, charset);
+        loadMesh(text, font);
     }
 
     @Override
@@ -75,11 +74,15 @@ public class Text extends Node {
     }
 
     public void setText(String text) {
-        loadMesh(text, font, charset);
+        loadMesh(text, font);
     }
 
-    private void loadMesh(String text, Font font, Charset charset) {
-        this.textTexture = new GuiTextTexture(font, charset);
+    public void setFont(Font font) {
+        this.font = font;
+    }
+
+    private void loadMesh(String text, Font font) {
+        this.textTexture = new GuiTextTexture(font);
 
         List<Float> positions = new ArrayList<>();
         List<Float> texCoords = new ArrayList<>();
@@ -129,6 +132,7 @@ public class Text extends Node {
             xOffset += charWidth;
         }
 
+        // todo change height to the largest char in text if possible
         this.size = new Vector2f(xOffset, textTexture.getHeight());
 
         float[] positionsArr = Utils.floatListToArray(positions);
@@ -145,5 +149,9 @@ public class Text extends Node {
         storeDataInAttribList(0, 2, positionsArr);
         storeDataInAttribList(1, 2, texCoordsArr);
         glBindVertexArray(0);
+    }
+
+    public int getAscent() {
+        return textTexture.getAscent();
     }
 }

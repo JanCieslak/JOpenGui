@@ -39,7 +39,6 @@ public abstract class Node {
         this.size = new Vector2f(w, h);
         children = new ArrayList<>();
 
-        // todo indices rendering
         float[] vertices = new float[] {
                 0.0f, 0.0f,
                 0 + size.x, 0 + size.y,
